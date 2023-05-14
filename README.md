@@ -1,6 +1,6 @@
 # AI helps PWR
-Repository for [Hack4WroclawTech](https://hack4wroclawtech.my.canva.site/) hackaton with project which will improve working at Wroclaw University of Science and 
-Technology applying some AI solution.
+Repository for [Hack4WroclawTech](https://hack4wroclawtech.my.canva.site/) hackhaton with project which will improve 
+working at Wroclaw University of Science and Technology applying some AI solution.
 
 ## Installation
 Required:
@@ -19,3 +19,9 @@ poetry shell  # activate venv
 pre-commit install
 pre-commit run --all-files
 ```
+
+## Running demo
+```
+demo_app
+```
+It should run streamlit app and open it in a browser.
