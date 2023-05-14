@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "ai-helps-pwr"
+version = "0.1.0"
+description = ""
+authors = [
+    "Wojciech Korczyński <wojtek19962a32@gmail.com>",
+    "Joanna Waczyńska <joanna.waczynska@gmail.com >",
+]
+readme = "README.md"
+packages = [{include = "ai_helps_pwr", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+numpy = "^1.24.3"
+matplotlib = "^3.7.1"
+pandas = "^2.0.1"
+scikit-learn = "^1.2.2"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.3.0"
+ruff = "^0.0.267"
+
+[tool.ruff]
+# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
+select = ["E", "F"]
+ignore = []
+
+# Same as Black.
+line-length = 88
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Assume Python 3.10.
+target-version = "py310"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
