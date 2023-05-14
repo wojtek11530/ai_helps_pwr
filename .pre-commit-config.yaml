@@ -1,0 +1,19 @@
+repos:
+-   repo: local
+    hooks:
+
+    - id: ruff
+      name: ruff
+      description: "Ruff: The uncompromising Python code formatter"
+      entry: ruff
+      language: python
+      types_or: [python, pyi]
+      args: [ --fix, --exit-non-zero-on-fix ]
+
+    - id: pytest-check
+      name: pytest-check
+      entry: pytest
+      types: [python]
+      language: python
+      pass_filenames: false
+      always_run: true
