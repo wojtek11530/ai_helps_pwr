@@ -1,7 +1,9 @@
+"""Demo using streamlit."""
 import streamlit as st
 
 
 def main():
+    """Demo App."""
     st.set_page_config(page_title="Hack4Wroclaw App", page_icon=":cat:")
     st.title("Demo App")
     text_input = st.text_input(

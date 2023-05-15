@@ -1,0 +1,14 @@
+message_params: &message_params
+  message_path: "data/test_prompt.json"
+
+gpt_params: &gpt_params
+  module: "src.ai_helps_pwr.models.GPT"
+  kwargs:
+    name: 'gpt-test'
+    gpt_model_name: 'gpt-3.5-turbo'
+
+qpt_conversation:
+  model:
+    <<: *gpt_params
+  prompt:
+    <<: *message_params

@@ -4,7 +4,7 @@ working at Wroclaw University of Science and Technology applying some AI solutio
 
 ## Installation
 Required:
- - python 3.10
+ - python 3.9
  - [poetry](https://python-poetry.org/)
 
 The project uses [poetry](https://python-poetry.org/) tool. So you should have it preinstalled
@@ -25,3 +25,16 @@ pre-commit run --all-files
 demo_app
 ```
 It should run streamlit app and open it in a browser.
+
+
+## Use GPT
+You should copy the config file from `config/config` to `config/config.local` and complete with your key.
+```
+[eventRegistry]
+    apiKey = yourapiKey
+```
+Then you can use:
+```
+experiments/scripts/conversation.py
+```
+where example input prompt you can find in `data/test_prompt.json`
