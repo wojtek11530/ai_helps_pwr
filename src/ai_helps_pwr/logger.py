@@ -13,6 +13,7 @@ def initialize_logging(
     log_level: LOG_LEVEL_TYPE = "INFO",
     file_path: Optional[Union[str, Path]] = None,
 ):
+    """Initialize logging."""
     stream_handler = logging.StreamHandler()
     formatter = logging.Formatter(
         "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -36,6 +37,7 @@ def custom_logger(
     log_level: LOG_LEVEL_TYPE = "INFO",
     file_path: Optional[Union[str, Path]] = None,
 ) -> logging.Logger:
+    """Custom logger."""
     custom_logger_obj = logging.getLogger(logger_name)
     initialize_logging(custom_logger_obj, log_level, file_path)
     return custom_logger_obj

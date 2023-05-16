@@ -1,4 +1,6 @@
 """Email responder."""
+import json
+
 from ai_helps_pwr.email_assistance.email_categories import CATEGORIES
 from ai_helps_pwr.email_assistance.email_container import EmailContainer
 from ai_helps_pwr.logger import custom_logger
@@ -17,6 +19,60 @@ Treść mejla: {email_text}"""
 
 logger = custom_logger(__name__)
 
+GPT_WHO_YOU_ARE = "Jesteś osobą pracującą w dziekanacie" \
+    "na wydziale W13 i pomagasz studentom."
+
+
+def user_question(mail_text: str):
+    """Create user content used to prompt."""
+    categories = str(list(CATEGORIES.keys()))
+    content = f"Opisz problem zawarty w mailu: \"{mail_text}\"." \
+        "Napisz podsumowanie oraz zaklasyfikuj problem do klasy" \
+        f"jednej z {categories} ." \
+        "Zwróć w formacie JSON: {\"problem\", \"summmary\"}."
+
+    return {
+        'role': 'user', 'content': content
+    }
+
+
+def first_prompt(mail_text: str) -> list[dict[str, str]]:
+    """Create first prompt. It includes system content and q&A example."""
+    system = {'role': 'system', 'content': GPT_WHO_YOU_ARE}
+    user_question_first_prompt = user_question("Mam probelm z XYX.")
+    assistant_content = """
+     {
+     "problem": "inne",
+     "summary": "Mail zawiera opis problemu związanego z X."
+     }
+     """.replace("\n", "")
+    assistant_answer_first_prompt = {
+        'role': 'assistant',
+        'content': assistant_content
+    }
+    user_question_mail = user_question(mail_text)
+    return [
+        system,
+        user_question_first_prompt,
+        assistant_answer_first_prompt,
+        user_question_mail
+    ]
+
+
+def create_conversation(
+        prompt: list[dict[str, str]],
+        response: dict[str, str]
+) -> list[dict[str, str]]:
+    """Create conversation (prompt).
+
+    Prompt includes base prompt and gpt response.
+    """
+    assistant_response = str(response).replace("'", '"')
+    final_prompt = prompt + [{
+        'role': 'user', 'content': assistant_response
+    }]
+    return final_prompt
+
 
 class EmailResponder:
     """Responder to email of students."""
@@ -30,20 +86,38 @@ class EmailResponder:
             key=self._api_key,
         )
 
-    def generate_response(self, email_text: str) -> EmailContainer:
-        """Generate response for given student mail."""
-        email_response_container = EmailContainer()
-        email_response_container.email_text = email_text
-
-        prompt = self._generate_prompt(email_text)
-
+    def post_gpt(self, prompt):
+        """Prompt send to ChatGPT and transform response."""
         logger.info("Prompt send to ChatGPT")
         chat_response = self._chat_gpt_model(prompt)
         logger.info("Response received from ChatGPT")
 
         response = chat_response["choices"][0]["message"]["content"]
+        response = response[:response.find("}") + 1]
+        try:
+            response = json.loads(response)
+        except json.decoder.JSONDecodeError:
+            response = {
+                'problem': 'inne',
+                'summary': 'niestandardowy problem'
+            }
+        return response
 
-        email_response_container.response = response
+    def generate_response(self, email_text: str) -> EmailContainer:
+        """Generate response for given student mail."""
+        email_response_container = EmailContainer()
+        email_response_container.email_text = email_text
+
+        prompt = first_prompt(email_text)
+        response = self.post_gpt(prompt)
+
+        for key in ['problem', 'summary']:
+            if key in response:
+                email_response_container.key = response[key]
+
+        email_response_container.prompt = create_conversation(
+            prompt, response
+        )
 
         return email_response_container
 
