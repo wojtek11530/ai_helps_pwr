@@ -27,7 +27,9 @@ def load_json(path_to_json: Path) -> list[dict[str, str]]:
     return data
 
 
-def get_openai_api_key(config_path: Path = Path(DEFAULT_OPENAI_API_CONFIG)) -> str:
+def get_openai_api_key(
+    config_path: Path = Path(DEFAULT_OPENAI_API_CONFIG),
+) -> str:
     """Load OpenAI API key from config file."""
     config = configparser.RawConfigParser()
     config.read(config_path)

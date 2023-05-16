@@ -2,8 +2,9 @@ from ai_helps_pwr.email_assistance.email_responder import EmailResponder
 
 email_text = """Dzień dobry,
 
-chciałbym się dowiedzieć czy mogę przepisać się na zajęcia laboratoryjne z Analizy
-Matematycznej do grupy pana dra Cichonia w poniedziałki o 17:15 mimo braku miejsc.
+chciałbym się dowiedzieć czy mogę przepisać się na zajęcia laboratoryjne z
+Analizy Matematycznej do grupy pana dra Cichonia w poniedziałki o 17:15 mimo
+braku miejsc.
 
 Pozdrawiam
 Stefan Banach

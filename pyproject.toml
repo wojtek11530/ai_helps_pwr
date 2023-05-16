@@ -38,6 +38,9 @@ flake8 = "^6.0.0"
 [tool.isort]
 profile = "black"
 
+[tool.black]
+line-length = 79
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

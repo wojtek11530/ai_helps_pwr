@@ -34,7 +34,10 @@ from ai_helps_pwr.utils.common import (
     default=Path("experiments/config/models.yaml"),
 )
 @click.option(
-    "--model", help="Name of selected model", type=str, default="qpt_conversation"
+    "--model",
+    help="Name of selected model",
+    type=str,
+    default="qpt_conversation",
 )
 @click.option(
     "--output_dir",
