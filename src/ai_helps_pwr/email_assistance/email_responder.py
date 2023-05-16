@@ -113,7 +113,7 @@ class EmailResponder:
 
         for key in ['problem', 'summary']:
             if key in response:
-                email_response_container.summary = response[key]
+                email_response_container.key = response[key]
 
         email_response_container.prompt = create_conversation(
             prompt, response
