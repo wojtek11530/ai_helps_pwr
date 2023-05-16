@@ -1,5 +1,6 @@
 """GPT Api connection."""
 import openai
+from typing import Dict, List
 
 
 class GPT:
@@ -14,7 +15,7 @@ class GPT:
         self.name = name
         self.gpt_model_name = gpt_model_name
 
-    def __call__(self, prompt, key):
+    def __call__(self, prompt: List[Dict[str, str]], key: str) -> Dict:
         """Post prompt to GPT API."""
         openai.api_key = key
         return openai.ChatCompletion.create(
