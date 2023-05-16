@@ -2,6 +2,7 @@
 import importlib
 import json
 from pathlib import Path
+from typing import Dict, List
 
 
 def load_model_from_config(cfg: dict):
@@ -16,7 +17,7 @@ def load_model_from_config(cfg: dict):
     return class_object(**cfg["kwargs"])
 
 
-def load_json(path_to_json: Path):
+def load_json(path_to_json: Path) -> List[Dict[str, str]]:
     """Load json file."""
     f = open(path_to_json)
     data = json.load(f)
