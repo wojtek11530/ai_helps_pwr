@@ -1,9 +1,10 @@
 """GPT Api connection."""
+from typing import Any
+
 import openai
-from typing import Dict, List
 
 
-class GPT:
+class ChatGPT:
     """Model to conversation."""
 
     def __init__(

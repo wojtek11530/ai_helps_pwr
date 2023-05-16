@@ -2,7 +2,7 @@ message_params: &message_params
   message_path: "data/test_prompt.json"
 
 gpt_params: &gpt_params
-  module: "src.ai_helps_pwr.models.GPT"
+  module: "ai_helps_pwr.models.ChatGPT"
   kwargs:
     name: 'gpt-test'
     gpt_model_name: 'gpt-3.5-turbo'
