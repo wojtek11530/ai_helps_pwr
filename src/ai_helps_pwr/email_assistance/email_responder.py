@@ -5,19 +5,10 @@ from ai_helps_pwr.email_assistance.email_categories import CATEGORIES
 from ai_helps_pwr.email_assistance.email_container import EmailContainer
 from ai_helps_pwr.logger import custom_logger
 from ai_helps_pwr.models import ChatGPT
+from ai_helps_pwr.settings import DATA_DIR
 from ai_helps_pwr.utils.common import get_openai_api_key
 
-prompt_template = """
-Jesteś pracownikiem dziekanatu Wydziału Matematyki na Politechnice
-Wrocławskiej. Twoim zadaniem jest udzielać pomocy studentom. Wygeneruj
-odpowiedź na mejl studenta do dziekanatu, która będzie:
- - informować, żeby spróbował znaleść odpowiedź pod adresem {link}
- - prosić o ponowne zapytanie, jeśli student nie znalazł odpowiedzi na
- jego pytanie.
- - podpisz się jako automatyczny asystent dziekanatu
-Treść mejla: {email_text}"""
-
-logger = custom_logger(__name__)
+logger = custom_logger("EmailResponder")
 
 GPT_WHO_YOU_ARE = "Jesteś osobą pracującą w dziekanacie" \
     "na wydziale W13 i pomagasz studentom."
@@ -125,17 +116,49 @@ class EmailResponder:
         prompt = []
 
         # TODO `category` na razie jako placeholder, należy dodać metodę by
-        #  utworzyć pierwsze zapytanie
-        # do chata i z niego wyciągnąć preydkowaną kategorię
+        #  utworzyć pierwsze zapytanie do chata i z niego wyciągnąć predykowaną
+        #  kategorię
         category = "zapisy"
-        info_to_add = CATEGORIES[category]["info"]
+        information_to_add = self._determine_information_to_add(category)
 
-        prompt.append(self._get_message_quering_form_email_answer(info_to_add))
-        return [
-            {"role": "user", "content": prompt_text},
-        ]
+        query_for_answer = self._get_message_quering_for_email_answer(
+            information_to_add
+        )
+        prompt.append(query_for_answer)
+        return prompt
 
-    def _get_message_quering_form_email_answer(
-        self, info: str
+    def _determine_information_to_add(self, category: str) -> str:
+        category_dict = CATEGORIES[category]
+        link = category_dict.get("link", None)
+        if link is not None:
+            return (
+                f"Dziękujemy za zadanie pytania. Proszę sprawdzić, czy "
+                f"odpowiedzi na pytanie nie jest pan/pani w stanie znaleść na "
+                f"stronie:\n{link}.\n"
+                f"Jeśli nie udałaby się Panu/Pani odszukać "
+                f"szukanych informacji, proszę wysłać zapytanie ponownie, "
+                f"na które pracownik dziekanatu udzieli odpowiedzi."
+            )
+
+        if "response" in category_dict:
+            return category_dict["response"]
+
+        else:
+            raise ValueError(
+                "Category dict should contain either field"
+                " 'link' or 'response`."
+            )
+
+    def _get_message_quering_for_email_answer(
+        self, information_to_add: str
     ) -> dict[str, str]:
-        return {"role": "user", "content": prompt_template.format(info=info)}
+        with open(
+            DATA_DIR / "email_generation_prompt.txt", "r", encoding="utf8"
+        ) as f:
+            lines = f.readlines()
+
+        prompt_template = "".join(lines).strip()
+        return {
+            "role": "user",
+            "content": prompt_template.format(info=information_to_add),
+        }
