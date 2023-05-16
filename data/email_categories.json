@@ -1,0 +1,17 @@
+[
+  {
+    "name": "zapisy",
+    "full_name": "Zapisy",
+    "link": "https://wmat.pwr.edu.pl/studenci/studia/zapisy"
+  },
+  {
+    "name": "legitymacje",
+    "full_name": "Elektroniczna legitymacja studencka",
+    "link": "https://wmat.pwr.edu.pl/studenci/studia/elektroniczna-legitymacja-studencka"
+  },
+  {
+    "name": "sesja",
+    "full_name": "Harmonogram sesji",
+    "link": "https://wmat.pwr.edu.pl/studenci/studia/harmonogram-sesji"
+  }
+]
