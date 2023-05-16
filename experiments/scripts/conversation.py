@@ -35,7 +35,7 @@ from ai_helps_pwr.utils.common import (
 )
 @click.option(
     "--model",
-    help="Name of selected  model",
+    help="Name of selected model",
     type=str,
     default="qpt_conversation"
 )
