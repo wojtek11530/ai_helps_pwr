@@ -57,8 +57,6 @@ def main(config_path: Path, hparams_path: Path, model: str, output_dir: Path):
 
     out = model(prompt)
 
-    out = model(prompt)
-
     time_now = datetime.now().strftime("%m_%d_%Y__%H_%M_%S")
     output_file = Path(
         os.path.join(output_dir, Path(model.name), Path(f"{time_now}.json"))
