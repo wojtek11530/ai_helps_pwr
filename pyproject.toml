@@ -32,6 +32,8 @@ black = "^23.3.0"
 ruff = "^0.0.267"
 pre-commit = "^3.3.1"
 notebook = "^6.5.4"
+tox = "^4.5.1"
+isort = "^5.12.0"
 
 [tool.ruff]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
@@ -47,6 +49,8 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 # Assume Python 3.9.
 target-version = "py39"
 
+[tool.isort]
+profile = "black"
 
 [build-system]
 requires = ["poetry-core"]

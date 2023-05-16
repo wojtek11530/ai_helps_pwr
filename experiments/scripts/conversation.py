@@ -1,14 +1,14 @@
 """Script for ."""
+import configparser
 import json
-from datetime import datetime
 import os
+from datetime import datetime
 from pathlib import Path
 
-import configparser
 import click
 import yaml
 
-from ai_helps_pwr.utils.common import load_model_from_config, load_json
+from ai_helps_pwr.utils.common import load_json, load_model_from_config
 
 
 @click.command()

@@ -161,3 +161,6 @@ cython_debug/
 
 # Config
 config/config.local
+
+# Prompt output dir
+output/*
