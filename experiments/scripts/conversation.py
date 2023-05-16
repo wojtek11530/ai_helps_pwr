@@ -10,7 +10,7 @@ import yaml
 
 from ai_helps_pwr.utils.common import (
     load_model_from_config,
-    load_prompt
+    load_json
 )
 
 
@@ -62,7 +62,7 @@ def main(
 
     model = load_model_from_config(cfg=hparams["model"])
 
-    prompt = load_prompt(hparams["prompt"]["message_path"])
+    prompt = load_json(hparams["prompt"]["message_path"])
 
     out = model(prompt, gpt_config['apikey'])
 

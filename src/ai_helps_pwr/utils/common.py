@@ -16,7 +16,7 @@ def load_model_from_config(cfg: dict):
     return class_object(**cfg["kwargs"])
 
 
-def load_prompt(path_to_json: Path):
+def load_json(path_to_json: Path):
     """Load json file."""
     f = open(path_to_json)
     data = json.load(f)
