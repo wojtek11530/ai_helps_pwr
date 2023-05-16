@@ -60,11 +60,15 @@ def main(
     with open(hparams_path, "r") as fin:
         hparams = yaml.safe_load(fin)[model]
 
-    model = load_model_from_config(cfg=hparams["model"])
+    model_cfg = hparams["model"]
+    model_cfg['kwargs']['key'] = gpt_config['apikey']
+    model = load_model_from_config(cfg=model_cfg)
 
     prompt = load_json(hparams["prompt"]["message_path"])
 
-    out = model(prompt, gpt_config['apikey'])
+    out = model(prompt)
+
+    out = model(prompt)
 
     time_now = datetime.now().strftime("%m_%d_%Y__%H_%M_%S")
     output_file = Path(os.path.join(

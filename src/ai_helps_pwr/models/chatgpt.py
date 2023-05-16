@@ -11,14 +11,15 @@ class ChatGPT:
         self,
         name: str,
         gpt_model_name: str,
+        key: str
     ):
         """Init."""
         self.name = name
         self.gpt_model_name = gpt_model_name
-
-    def __call__(self, prompt: List[Dict[str, str]], key: str) -> Dict:
-        """Post prompt to GPT API."""
         openai.api_key = key
+
+    def __call__(self, prompt: list[dict[str, str]]) -> dict[str, Any]:
+        """Post prompt to GPT API."""
         return openai.ChatCompletion.create(
             model=self.gpt_model_name,
             messages=prompt
