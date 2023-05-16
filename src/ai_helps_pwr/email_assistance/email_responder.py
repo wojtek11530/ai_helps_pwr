@@ -5,7 +5,7 @@ from ai_helps_pwr.email_assistance.email_categories import CATEGORIES
 from ai_helps_pwr.email_assistance.email_container import EmailContainer
 from ai_helps_pwr.logger import custom_logger
 from ai_helps_pwr.models import ChatGPT
-from ai_helps_pwr.utils.common import get_openai_api_key, load_json
+from ai_helps_pwr.utils.common import get_openai_api_key
 
 prompt_template = """
 Jesteś pracownikiem dziekanatu Wydziału Matematyki na Politechnice
@@ -19,15 +19,17 @@ Treść mejla: {email_text}"""
 
 logger = custom_logger(__name__)
 
-GPT_WHO_YOU_ARE = "Jesteś osobą pracującą w dziekanacie na wydziale W13 i pomagasz studentom."
+GPT_WHO_YOU_ARE = "Jesteś osobą pracującą w dziekanacie" \
+    "na wydziale W13 i pomagasz studentom."
 
 
 def user_question(mail_text: str):
+    """Create user content used to prompt."""
     categories = str(list(CATEGORIES.keys()))
     content = f"Opisz problem zawarty w mailu: \"{mail_text}\"." \
-    "Napisz podsumowanie oraz zaklasyfikuj problem do klasy" \
-    f"jednej z {categories} ." \
-    "Zwróć w formacie JSON: {\"problem\", \"summmary\"}."
+        "Napisz podsumowanie oraz zaklasyfikuj problem do klasy" \
+        f"jednej z {categories} ." \
+        "Zwróć w formacie JSON: {\"problem\", \"summmary\"}."
 
     return {
         'role': 'user', 'content': content
@@ -35,10 +37,19 @@ def user_question(mail_text: str):
 
 
 def first_prompt(mail_text: str) -> list[dict[str, str]]:
+    """Create first prompt. It includes system content and q&A example."""
     system = {'role': 'system', 'content': GPT_WHO_YOU_ARE}
     user_question_first_prompt = user_question("Mam probelm z XYX.")
-    assistant_answer_first_prompt = {'role': 'assistant',
-     'content': """{"problem": "inne", "summary": "Mail zawiera opis problemu związanego z X."}"""}
+    assistant_content = """
+     {
+     "problem": "inne",
+     "summary": "Mail zawiera opis problemu związanego z X."
+     }
+     """.replace("\n", "")
+    assistant_answer_first_prompt = {
+        'role': 'assistant',
+        'content': assistant_content
+    }
     user_question_mail = user_question(mail_text)
     return [
         system,
@@ -76,6 +87,7 @@ class EmailResponder:
         )
 
     def post_gpt(self, prompt):
+        """Prompt send to ChatGPT and transform response."""
         logger.info("Prompt send to ChatGPT")
         chat_response = self._chat_gpt_model(prompt)
         logger.info("Response received from ChatGPT")
