@@ -1,5 +1,3 @@
-from .gpt import GPT
+from .chatgpt import ChatGPT
 
-__all__ = [
-    "GPT"
-]
+__all__ = ["ChatGPT"]
