@@ -8,7 +8,7 @@ import configparser
 import click
 import yaml
 
-from src.ai_helps_pwr.utils.common import (
+from ai_helps_pwr.utils.common import (
     load_model_from_config,
     load_prompt
 )
