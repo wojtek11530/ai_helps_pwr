@@ -31,7 +31,7 @@ It should run streamlit app and open it in a browser.
 You should copy the config file from `config/config` to `config/config.local` and complete with your key.
 ```
 [eventRegistry]
-    apiKey = yourapiKey
+apiKey = yourapiKey
 ```
 Then you can use:
 ```
