@@ -18,7 +18,7 @@ def main():
     response = responder.generate_response(email_text)
 
     print("Email and response:")
-    pprint(response)
+    pprint(vars(response))
 
 
 if __name__ == "__main__":

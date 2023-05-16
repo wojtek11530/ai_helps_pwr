@@ -4,6 +4,16 @@
     "full_name": "Zapisy",
     "link": "https://wmat.pwr.edu.pl/studenci/studia/zapisy"
   },
+    {
+    "name": "legitymacje",
+    "full_name": "Elektroniczna legitymacja studencka",
+    "link": "https://wmat.pwr.edu.pl/studenci/studia/elektroniczna-legitymacja-studencka"
+  },
+  {
+    "name": "sesja",
+    "full_name": "Harmonogram sesji",
+    "link": "https://wmat.pwr.edu.pl/studenci/studia/harmonogram-sesji"
+  },
   {
     "name": "przepis_oceny",
     "full_name": "Przepisanie oceny",
@@ -18,16 +28,6 @@
     "name": "odbior_dokumentow",
     "full_name": "Odbiór dokumentów",
     "response": "Problem ten zostanie rozwiązany indywidalnie, dlatego prosimy czekać. Informujemy także, że uczelnia ma 30 dni na wydanie dyplomu. Dyplomy wydaje Biuro personalizacji.\n"
-  },
-  {
-    "name": "legitymacje",
-    "full_name": "Elektroniczna legitymacja studencka",
-    "link": "https://wmat.pwr.edu.pl/studenci/studia/elektroniczna-legitymacja-studencka"
-  },
-  {
-    "name": "sesja",
-    "full_name": "Harmonogram sesji",
-    "link": "https://wmat.pwr.edu.pl/studenci/studia/harmonogram-sesji"
   },
   {
     "name": "inne",
