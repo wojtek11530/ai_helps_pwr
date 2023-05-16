@@ -5,6 +5,21 @@
     "link": "https://wmat.pwr.edu.pl/studenci/studia/zapisy"
   },
   {
+    "name": "przepis_oceny",
+    "full_name": "Przepisanie oceny",
+    "response": "Proszę złożyć wniosek o uznanie dorobku - proszę wypełnić tabelkę i przesłać ją do Anny Rubik (anna.rubik@pwr.edu.pl).https://wmat.pwr.edu.pl/studenci/studia/podania (Dorobek)\n\nW tabeli proszę podać kody USOSowe (lewa strona) i kody JSOSowe które przedmioty chce sobie uznać/\"przepisać\"\""
+  },
+  {
+    "name": "wysłanie_dokumentów",
+    "full_name": "Dosłanie potrzebnych dokumentów",
+    "response": "Dziękujemy za dosłanie potrzebnych dokumnetów. Zweryfikujemy je w krótkim czasie."
+  },
+  {
+    "name": "odbior_dokumentow",
+    "full_name": "Odbiór dokumentów",
+    "response": "Problem ten zostanie rozwiązany indywidalnie, dlatego prosimy czekać. Informujemy także, że uczelnia ma 30 dni na wydanie dyplomu. Dyplomy wydaje Biuro personalizacji.\n"
+  },
+  {
     "name": "legitymacje",
     "full_name": "Elektroniczna legitymacja studencka",
     "link": "https://wmat.pwr.edu.pl/studenci/studia/elektroniczna-legitymacja-studencka"

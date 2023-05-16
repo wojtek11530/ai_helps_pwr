@@ -1,13 +1,12 @@
 from ai_helps_pwr.email_assistance.email_responder import EmailResponder
 
 email_text = """Dzień dobry,
-
-chciałbym się dowiedzieć czy mogę przepisać się na zajęcia laboratoryjne z
-Analizy Matematycznej do grupy pana dra Cichonia w poniedziałki o 17:15 mimo
-braku miejsc.
-
-Pozdrawiam
-Stefan Banach
+nazywam się Michał Zdrojewski i skończyłem studia pierwszego i drugiego stopnia na PWR. 
+Teraz w październiku zaczynam kolejne studia magisterskie na PWR i
+chciałbym się dowiedzieć, czy w związku z tym jestem zobligowany do
+ponownego zaliczenia kursów językowych, czy jest możliwość przepisu ocen?
+Z wyrazami szacunku,
+Michał
 """
 
 
