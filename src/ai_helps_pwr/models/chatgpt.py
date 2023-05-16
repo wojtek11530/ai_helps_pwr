@@ -15,4 +15,6 @@ class ChatGPT:
 
     def __call__(self, prompt: list[dict[str, str]]) -> dict[str, Any]:
         """Post prompt to GPT API."""
-        return openai.ChatCompletion.create(model=self.gpt_model_name, messages=prompt)
+        return openai.ChatCompletion.create(
+            model=self.gpt_model_name, messages=prompt
+        )
