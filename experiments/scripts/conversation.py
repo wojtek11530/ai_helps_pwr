@@ -8,10 +8,7 @@ import configparser
 import click
 import yaml
 
-from ai_helps_pwr.utils.common import (
-    load_model_from_config,
-    load_json
-)
+from ai_helps_pwr.utils.common import load_model_from_config, load_json
 
 
 @click.command()
@@ -19,49 +16,41 @@ from ai_helps_pwr.utils.common import (
     "--config_path",
     help="Path to config.",
     type=click.Path(exists=True, path_type=Path),
-    default=Path("config/config.local")
+    default=Path("config/config.local"),
 )
 @click.option(
     "--output_dir",
     help="Directory to save data.",
     type=click.Path(path_type=Path),
-    default=Path("output")
+    default=Path("output"),
 )
 @click.option(
     "--hparams_path",
     help="Path to selected model hparams",
     type=click.Path(exists=True, path_type=Path),
-    default=Path("experiments/config/models.yaml")
+    default=Path("experiments/config/models.yaml"),
 )
 @click.option(
-    "--model",
-    help="Name of selected model",
-    type=str,
-    default="qpt_conversation"
+    "--model", help="Name of selected model", type=str, default="qpt_conversation"
 )
 @click.option(
     "--output_dir",
     help="Directory to save data.",
     type=click.Path(path_type=Path),
-    default=Path("output")
+    default=Path("output"),
 )
-def main(
-    config_path: Path,
-    hparams_path: Path,
-    model: str,
-    output_dir: Path
-):
+def main(config_path: Path, hparams_path: Path, model: str, output_dir: Path):
     """Use GPT to answer a question."""
     config = configparser.RawConfigParser()
     config.read(config_path)
 
-    gpt_config = dict(config.items('gpt'))
+    gpt_config = dict(config.items("gpt"))
 
     with open(hparams_path, "r") as fin:
         hparams = yaml.safe_load(fin)[model]
 
     model_cfg = hparams["model"]
-    model_cfg['kwargs']['key'] = gpt_config['apikey']
+    model_cfg["kwargs"]["key"] = gpt_config["apikey"]
     model = load_model_from_config(cfg=model_cfg)
 
     prompt = load_json(hparams["prompt"]["message_path"])
@@ -71,10 +60,9 @@ def main(
     out = model(prompt)
 
     time_now = datetime.now().strftime("%m_%d_%Y__%H_%M_%S")
-    output_file = Path(os.path.join(
-        output_dir, Path(model.name),
-        Path(f"{time_now}.json")
-    ))
+    output_file = Path(
+        os.path.join(output_dir, Path(model.name), Path(f"{time_now}.json"))
+    )
 
     output_file.parent.mkdir(parents=True, exist_ok=True)
     with output_file.open("w") as f_out:
