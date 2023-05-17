@@ -36,23 +36,64 @@ class EmailResponder:
     def generate_response(self, email_text: str) -> EmailContainer:
         """Generate response for given student mail."""
         logger.info("Generating response for email called")
+        email_response_container, prompt = self._run_auxiliary_gpt_call(
+            email_text
+        )
+        self.run_final_gpt_call(email_response_container, prompt)
+        return email_response_container
+
+    def run_auxiliary_gpt_call(
+        self, email_text: str
+    ) -> tuple[EmailContainer, PROMPT_TYPE]:
+        """Run first (auxiliary) gpt call.
+
+        This stage is needed to generate email response. It returns
+        EmailContainer which fields are fulfilled with data from first response
+        and list of messages in prompt which should be used in final ChatGPT
+        to call to generate mail response.
+        """
+        logger.info("Generating auxiliar response for email called")
+        return self._run_auxiliary_gpt_call(email_text)
+
+    def run_final_gpt_call(
+        self, email_response_container: EmailContainer, prompt: PROMPT_TYPE
+    ):
+        """Run final gpt call to generate email response."""
+        logger.info(
+            "Generating email response for data obtained based on "
+            "data from auxiliary gpt call"
+        )
+        self._run_final_gpt_call(email_response_container, prompt)
+
+    def _run_auxiliary_gpt_call(self, email_text):
         email_response_container = EmailContainer()
         email_response_container.email_text = email_text
 
-        prompt = self._generate_first_prompt(email_text)
+        prompt = self._generate_auxiliary_prompt(email_text)
+
         logger.info("Calling ChatGPT for auxiliary response")
-        response = self._call_gpt_and_get_json_response(prompt)
-        logger.info(f"Auxiliary model response:\n{pprint.pformat(response)}")
+        aux_response = self._call_gpt_and_get_json_response(prompt)
+        logger.info(
+            f"Auxiliary model response:\n{pprint.pformat(aux_response)}"
+        )
+
         problem_category = self._validate_category(
-            response.get("problem", None)
+            aux_response.get("problem", None)
         )
         email_response_container.problem = problem_category
+        email_response_container.full_problem_name = CATEGORIES[
+            problem_category
+        ]["full_name"]
 
-        if "summary" in response:
-            email_response_container.summary = response["summary"]
+        if "summary" in aux_response:
+            email_response_container.summary = aux_response["summary"]
 
-        prompt.append(self._pack_chatgpt_response_into_message(response))
+        prompt.append(self._pack_chatgpt_response_into_message(aux_response))
+        return email_response_container, prompt
 
+    def _run_final_gpt_call(
+        self, email_response_container: EmailContainer, prompt: PROMPT_TYPE
+    ):
         problem_category = email_response_container.problem
         information_to_add = self._determine_information_to_add(
             problem_category
@@ -70,10 +111,11 @@ class EmailResponder:
         response = self._get_content_from_chatgpt_response(chat_response)
         email_response_container.response = response
 
-        return email_response_container
+    def _generate_auxiliary_prompt(self, mail_text: str) -> PROMPT_TYPE:
+        """Create first (auxiliary) prompt.
 
-    def _generate_first_prompt(self, mail_text: str) -> PROMPT_TYPE:
-        """Create first prompt. It includes system content and q&A example."""
+        It includes system content and q&A example.
+        """
         system = {"role": "system", "content": GPT_WHO_YOU_ARE}
         user_question_first_prompt = (
             self._get_message_quering_for_email_category_and_summary(
