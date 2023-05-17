@@ -40,14 +40,20 @@ class EmailResponder:
         prompt = self._generate_first_prompt(email_text)
         response = self._call_gpt_and_get_json_response(prompt)
 
-        for key in ["problem", "summary"]:
-            if key in response:
-                setattr(email_response_container, key, response[key])
+        problem_category = self._validate_category(
+            response.get("problem", None)
+        )
+        email_response_container.problem = problem_category
+
+        if "summary" in response:
+            email_response_container.summary = response["summary"]
 
         prompt.append(self._pack_chatgpt_response_into_message(response))
 
-        category = email_response_container.problem
-        information_to_add = self._determine_information_to_add(category)
+        problem_category = email_response_container.problem
+        information_to_add = self._determine_information_to_add(
+            problem_category
+        )
         query_for_answer = self._get_message_quering_for_email_answer(
             information_to_add
         )
@@ -56,7 +62,7 @@ class EmailResponder:
         email_response_container.prompt = prompt
 
         chat_response = self._call_chatgpt(prompt)
-        response = chat_response["choices"][0]["message"]["content"]
+        response = self._get_content_from_chatgpt_response(chat_response)
         email_response_container.response = response
 
         return email_response_container
@@ -66,7 +72,7 @@ class EmailResponder:
         system = {"role": "system", "content": GPT_WHO_YOU_ARE}
         user_question_first_prompt = (
             self._get_message_quering_for_email_category_and_summary(
-                "Mam problem z XYX."
+                "Mam problem z XYZ."
             )
         )
         assistant_content = """
@@ -94,14 +100,19 @@ class EmailResponder:
     def _call_gpt_and_get_json_response(self, prompt: PROMPT_TYPE) -> dict:
         """Send prompt send to ChatGPT and transform JSON format response."""
         chat_response = self._call_chatgpt(prompt)
-        response = chat_response["choices"][0]["message"]["content"]
+        response_content = self._get_content_from_chatgpt_response(
+            chat_response
+        )
 
-        response = response[: response.find("}") + 1]
+        response_content = response_content[: response_content.find("}") + 1]
         try:
-            response = json.loads(response)
+            response_as_dict = json.loads(response_content)
         except json.decoder.JSONDecodeError:
-            response = {"problem": "inne", "summary": "niestandardowy problem"}
-        return response
+            response_as_dict = {
+                "problem": "inne",
+                "summary": "niestandardowy problem",
+            }
+        return response_as_dict
 
     def _pack_chatgpt_response_into_message(
         self, response: dict[str, str]
@@ -128,14 +139,21 @@ class EmailResponder:
 
         return {"role": "user", "content": content}
 
+    def _validate_category(self, category: str):
+        # In the case when ChatGPT do not return any category or category is
+        # incorrect we assign it to category `others` (inne)
+        if category is None or category not in CATEGORIES:
+            category = "inne"
+
+        return category
+
     def _determine_information_to_add(self, category: str) -> str:
-        # TODO handle lack of class because of wrong GPT answer
         category_dict = CATEGORIES[category]
         link = category_dict.get("link", None)
         if link is not None:
             return (
                 f"Dziękujemy za zadanie pytania. Proszę sprawdzić, czy "
-                f"odpowiedzi na pytanie nie jest pan/pani w stanie znaleść na "
+                f"odpowiedzi na pytanie nie jest Pan/Pani w stanie znaleść na "
                 f"stronie:\n{link}.\n"
                 f"Jeśli nie udałaby się Panu/Pani odszukać "
                 f"szukanych informacji, proszę wysłać zapytanie ponownie, "
@@ -170,3 +188,8 @@ class EmailResponder:
         chat_response = self._chat_gpt_model(prompt)
         logger.info("Response received from ChatGPT")
         return chat_response
+
+    def _get_content_from_chatgpt_response(
+        self, chat_response: dict[str, Any]
+    ) -> str:
+        return chat_response["choices"][0]["message"]["content"]
