@@ -1,2 +1,0 @@
-Directory containing data: external, raw, processed, etc. Smaller files can be kept as they are. Larger data files
-should be stored using some DVC tool.

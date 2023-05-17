@@ -21,9 +21,8 @@ def load_model_from_config(cfg: dict):
 
 def load_json(path_to_json: Path) -> list[dict[str, str]]:
     """Load json file."""
-    f = open(path_to_json)
-    data = json.load(f)
-    f.close()
+    with open(path_to_json, encoding="utf-8") as f:
+        data = json.load(f)
     return data
 
 
