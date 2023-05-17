@@ -34,3 +34,13 @@ def get_openai_api_key(
     config.read(config_path)
     gpt_config = dict(config.items("gpt"))
     return gpt_config["apikey"]
+
+
+def get_email_credentials(
+    config_path: Path = Path(DEFAULT_OPENAI_API_CONFIG),
+) -> str:
+    """Load email credentials from config file."""
+    config = configparser.RawConfigParser()
+    config.read(config_path)
+    email_config = dict(config.items("email"))
+    return email_config["sender"], email_config["password"]
