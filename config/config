@@ -1,2 +1,5 @@
 [gpt]
 apiKey = yourapiKey
+[email]
+sender = yourmail
+password = yourpassword
