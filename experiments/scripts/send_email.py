@@ -1,14 +1,14 @@
+"""Script to sending email."""
 from pathlib import Path
-
 import click
-
 from ai_helps_pwr.email_assistance.email_sender import EmailSender
 from ai_helps_pwr.utils.common import (
     get_email_credentials,
 )
-text = """Dzień dobry,
 
-Przykładowy text
+text = """Dzień dobry,\n
+
+Przykładowy text\n
 
 Twój Dziekanat
 """
@@ -29,7 +29,7 @@ def main(config_path: Path):
         sender, password
     )
     email_sender.send_mail(
-        receiver_email="asia.wacz@gmail.com",
+        receiver_email="wojtek19962a32@gmail.com ",
         text=text
     )
 

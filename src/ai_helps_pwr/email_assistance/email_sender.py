@@ -1,12 +1,15 @@
-import smtplib, ssl
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import smtplib
+import ssl
 from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 
 class EmailSender:
+    """Object to send mail using gmail."""
 
     def __init__(self, sender_email: str, password: str):
+        """Init."""
         message = MIMEMultipart("alternative")
         message["Subject"] = "multipart test"
         self.sender_email = sender_email
@@ -15,6 +18,7 @@ class EmailSender:
         self.message = message
 
     def add_pic_to_email(self, cid, img_path):
+        """Add image to email."""
         fp = open(img_path, 'rb')
         msgImage = MIMEImage(fp.read())
         fp.close()
@@ -22,6 +26,7 @@ class EmailSender:
         self.message.attach(msgImage)
 
     def create_email(self, html_body_path: str, text):
+        """Create email using template and add images."""
         with open(html_body_path, "r", encoding='utf-8') as f:
             html = f.read()
 
@@ -36,6 +41,7 @@ class EmailSender:
         self.message.attach(m_text)
 
     def _send_mail(self, receiver_email):
+        """Setting to send mail. Send mail."""
         self.message["To"] = receiver_email
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL(
@@ -52,5 +58,6 @@ class EmailSender:
         text: str,
         html_body_path: str = "data/email/index.txt"
     ):
+        """Send mail with text to receiver_email."""
         self.create_email(html_body_path, text)
         self._send_mail(receiver_email)
