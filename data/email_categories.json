@@ -1,31 +1,61 @@
 [
   {
-    "name": "zapisy",
-    "full_name": "Zapisy",
-    "link": "https://wmat.pwr.edu.pl/studenci/studia/zapisy"
-  },
-    {
-    "name": "legitymacje",
-    "full_name": "Elektroniczna legitymacja studencka",
-    "link": "https://wmat.pwr.edu.pl/studenci/studia/elektroniczna-legitymacja-studencka"
-  },
-  {
     "name": "sesja",
     "full_name": "Harmonogram sesji",
     "link": "https://wmat.pwr.edu.pl/studenci/studia/harmonogram-sesji"
   },
   {
-    "name": "przepis_oceny",
+    "name": "zapisy",
+    "full_name": "Zapisy",
+    "link": "https://wmat.pwr.edu.pl/studenci/studia/zapisy"
+  },
+  {
+    "name": "legitymacje",
+    "full_name": "Elektroniczna legitymacja studencka",
+    "link": "https://wmat.pwr.edu.pl/studenci/studia/elektroniczna-legitymacja-studencka"
+  },
+  {
+    "name": "dyplomowanie",
+    "full_name": "Dyplomowanie",
+    "link": "https://wmat.pwr.edu.pl/studenci/dyplomanci"
+  },
+  {
+    "name": "studia doktoranckie",
+    "full_name": "Studia doktoranckie",
+    "link": "https://wmat.pwr.edu.pl/studenci/studia-doktoranckie"
+  },
+  {
+    "name": "rozkłady zajęć",
+    "full_name": "Rozkłady Zajęć",
+    "link": "https://wmat.pwr.edu.pl/studenci/studia/rozklady-zajec"
+  },
+  {
+    "name": "program studiów",
+    "full_name": "Programy studiów i karty przedmiotów",
+    "link": "https://wmat.pwr.edu.pl/studenci/studia/programy-studiow"
+  },
+  {
+    "name": "indywidualny organizacja studiów",
+    "full_name": "Indywidualna organizacja studiów",
+    "link": "https://wmat.pwr.edu.pl/studenci/studia/indywidualna-organizacja-studiow"
+  },
+  {
+    "name": "praktyki",
+    "full_name": "Praktyki",
+    "link": "https://wmat.pwr.edu.pl/studenci/studia/praktyki"
+  },
+  {
+    "name": "przepis oceny",
     "full_name": "Przepisanie oceny",
     "response": "Proszę złożyć wniosek o uznanie dorobku - proszę wypełnić tabelkę i przesłać ją do Anny Rubik (anna.rubik@pwr.edu.pl).https://wmat.pwr.edu.pl/studenci/studia/podania (Dorobek)\n\nW tabeli proszę podać kody USOSowe (lewa strona) i kody JSOSowe które przedmioty chce sobie uznać/\"przepisać\"\""
   },
   {
-    "name": "wysłanie_dokumentów",
+    "name": "wysłanie dokumentów",
     "full_name": "Dosłanie potrzebnych dokumentów",
-    "response": "Dziękujemy za dosłanie potrzebnych dokumnetów. Zweryfikujemy je w krótkim czasie."
+    "response": "Dziękujemy za dosłanie potrzebnych dokumentów. Zweryfikujemy je w krótkim czasie."
   },
   {
-    "name": "odbior_dokumentow",
+    "name": "odbiór dokumentów",
     "full_name": "Odbiór dokumentów",
     "response": "Problem ten zostanie rozwiązany indywidalnie, dlatego prosimy czekać. Informujemy także, że uczelnia ma 30 dni na wydanie dyplomu. Dyplomy wydaje Biuro personalizacji.\n"
   },

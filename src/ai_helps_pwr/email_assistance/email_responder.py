@@ -1,5 +1,6 @@
 """Email responder."""
 import json
+import pprint
 from typing import Any
 
 from ai_helps_pwr.email_assistance.email_categories import CATEGORIES
@@ -34,12 +35,14 @@ class EmailResponder:
 
     def generate_response(self, email_text: str) -> EmailContainer:
         """Generate response for given student mail."""
+        logger.info("Generating response for email called")
         email_response_container = EmailContainer()
         email_response_container.email_text = email_text
 
         prompt = self._generate_first_prompt(email_text)
+        logger.info("Calling ChatGPT for auxiliary response")
         response = self._call_gpt_and_get_json_response(prompt)
-
+        logger.info(f"Auxiliary model response:\n{pprint.pformat(response)}")
         problem_category = self._validate_category(
             response.get("problem", None)
         )
@@ -61,7 +64,9 @@ class EmailResponder:
 
         email_response_container.prompt = prompt
 
+        logger.info("Calling ChatGPT for generating email response")
         chat_response = self._call_chatgpt(prompt)
+        logger.info("Email response generated")
         response = self._get_content_from_chatgpt_response(chat_response)
         email_response_container.response = response
 
