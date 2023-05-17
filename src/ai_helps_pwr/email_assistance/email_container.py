@@ -6,7 +6,6 @@ class EmailContainer:
     """Construct Email Container object."""
 
     email_text: str = None
-    category: str = None
     summary: str = None
     problem: str = None
     response: str = None
