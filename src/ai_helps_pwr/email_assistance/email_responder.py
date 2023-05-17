@@ -1,77 +1,23 @@
 """Email responder."""
 import json
+from typing import Any
 
 from ai_helps_pwr.email_assistance.email_categories import CATEGORIES
 from ai_helps_pwr.email_assistance.email_container import EmailContainer
 from ai_helps_pwr.logger import custom_logger
 from ai_helps_pwr.models import ChatGPT
+from ai_helps_pwr.settings import DATA_DIR
 from ai_helps_pwr.utils.common import get_openai_api_key
 
-prompt_template = """
-Jesteś pracownikiem dziekanatu Wydziału Matematyki na Politechnice
-Wrocławskiej. Twoim zadaniem jest udzielać pomocy studentom. Wygeneruj
-odpowiedź na mejl studenta do dziekanatu, która będzie:
- - informować, żeby spróbował znaleść odpowiedź pod adresem {link}
- - prosić o ponowne zapytanie, jeśli student nie znalazł odpowiedzi na
- jego pytanie.
- - podpisz się jako automatyczny asystent dziekanatu
-Treść mejla: {email_text}"""
+logger = custom_logger("EmailResponder")
 
-logger = custom_logger(__name__)
-
-GPT_WHO_YOU_ARE = "Jesteś osobą pracującą w dziekanacie" \
+GPT_WHO_YOU_ARE = (
+    "Jesteś osobą pracującą w dziekanacie"
     "na wydziale W13 i pomagasz studentom."
+)
 
-
-def user_question(mail_text: str):
-    """Create user content used to prompt."""
-    categories = str(list(CATEGORIES.keys()))
-    content = f"Opisz problem zawarty w mailu: \"{mail_text}\"." \
-        "Napisz podsumowanie oraz zaklasyfikuj problem do klasy" \
-        f"jednej z {categories} ." \
-        "Zwróć w formacie JSON: {\"problem\", \"summmary\"}."
-
-    return {
-        'role': 'user', 'content': content
-    }
-
-
-def first_prompt(mail_text: str) -> list[dict[str, str]]:
-    """Create first prompt. It includes system content and q&A example."""
-    system = {'role': 'system', 'content': GPT_WHO_YOU_ARE}
-    user_question_first_prompt = user_question("Mam probelm z XYX.")
-    assistant_content = """
-     {
-     "problem": "inne",
-     "summary": "Mail zawiera opis problemu związanego z X."
-     }
-     """.replace("\n", "")
-    assistant_answer_first_prompt = {
-        'role': 'assistant',
-        'content': assistant_content
-    }
-    user_question_mail = user_question(mail_text)
-    return [
-        system,
-        user_question_first_prompt,
-        assistant_answer_first_prompt,
-        user_question_mail
-    ]
-
-
-def create_conversation(
-        prompt: list[dict[str, str]],
-        response: dict[str, str]
-) -> list[dict[str, str]]:
-    """Create conversation (prompt).
-
-    Prompt includes base prompt and gpt response.
-    """
-    assistant_response = str(response).replace("'", '"')
-    final_prompt = prompt + [{
-        'role': 'user', 'content': assistant_response
-    }]
-    return final_prompt
+MSG_TYPE = dict[str, str]
+PROMPT_TYPE = list[MSG_TYPE]
 
 
 class EmailResponder:
@@ -86,56 +32,141 @@ class EmailResponder:
             key=self._api_key,
         )
 
-    def post_gpt(self, prompt):
-        """Prompt send to ChatGPT and transform response."""
-        logger.info("Prompt send to ChatGPT")
-        chat_response = self._chat_gpt_model(prompt)
-        logger.info("Response received from ChatGPT")
-
-        response = chat_response["choices"][0]["message"]["content"]
-        response = response[:response.find("}") + 1]
-        try:
-            response = json.loads(response)
-        except json.decoder.JSONDecodeError:
-            response = {
-                'problem': 'inne',
-                'summary': 'niestandardowy problem'
-            }
-        return response
-
     def generate_response(self, email_text: str) -> EmailContainer:
         """Generate response for given student mail."""
         email_response_container = EmailContainer()
         email_response_container.email_text = email_text
 
-        prompt = first_prompt(email_text)
-        response = self.post_gpt(prompt)
+        prompt = self._generate_first_prompt(email_text)
+        response = self._call_gpt_and_get_json_response(prompt)
 
-        for key in ['problem', 'summary']:
+        for key in ["problem", "summary"]:
             if key in response:
-                email_response_container.key = response[key]
+                setattr(email_response_container, key, response[key])
 
-        email_response_container.prompt = create_conversation(
-            prompt, response
+        prompt.append(self._pack_chatgpt_response_into_message(response))
+
+        category = email_response_container.problem
+        information_to_add = self._determine_information_to_add(category)
+        query_for_answer = self._get_message_quering_for_email_answer(
+            information_to_add
         )
+        prompt.append(query_for_answer)
+
+        email_response_container.prompt = prompt
+
+        chat_response = self._call_chatgpt(prompt)
+        response = chat_response["choices"][0]["message"]["content"]
+        email_response_container.response = response
 
         return email_response_container
 
-    def _generate_prompt(self, prompt_text: str) -> list[dict[str, str]]:
-        prompt = []
-
-        # TODO `category` na razie jako placeholder, należy dodać metodę by
-        #  utworzyć pierwsze zapytanie
-        # do chata i z niego wyciągnąć preydkowaną kategorię
-        category = "zapisy"
-        info_to_add = CATEGORIES[category]["info"]
-
-        prompt.append(self._get_message_quering_form_email_answer(info_to_add))
+    def _generate_first_prompt(self, mail_text: str) -> PROMPT_TYPE:
+        """Create first prompt. It includes system content and q&A example."""
+        system = {"role": "system", "content": GPT_WHO_YOU_ARE}
+        user_question_first_prompt = (
+            self._get_message_quering_for_email_category_and_summary(
+                "Mam problem z XYX."
+            )
+        )
+        assistant_content = """
+         {
+         "problem": "inne",
+         "summary": "Mail zawiera opis problemu związanego z X."
+         }
+         """.replace(
+            "\n", ""
+        )
+        assistant_answer_first_prompt = {
+            "role": "assistant",
+            "content": assistant_content,
+        }
+        user_question_mail = (
+            self._get_message_quering_for_email_category_and_summary(mail_text)
+        )
         return [
-            {"role": "user", "content": prompt_text},
+            system,
+            user_question_first_prompt,
+            assistant_answer_first_prompt,
+            user_question_mail,
         ]
 
-    def _get_message_quering_form_email_answer(
-        self, info: str
-    ) -> dict[str, str]:
-        return {"role": "user", "content": prompt_template.format(info=info)}
+    def _call_gpt_and_get_json_response(self, prompt: PROMPT_TYPE) -> dict:
+        """Send prompt send to ChatGPT and transform JSON format response."""
+        chat_response = self._call_chatgpt(prompt)
+        response = chat_response["choices"][0]["message"]["content"]
+
+        response = response[: response.find("}") + 1]
+        try:
+            response = json.loads(response)
+        except json.decoder.JSONDecodeError:
+            response = {"problem": "inne", "summary": "niestandardowy problem"}
+        return response
+
+    def _pack_chatgpt_response_into_message(
+        self, response: dict[str, str]
+    ) -> MSG_TYPE:
+        """Pack intermediary chatgpt response into message.
+
+        It will be used in the final prompt including first prompt and chat gpt
+         response with email summary and problem type.
+        """
+        assistant_response = str(response).replace("'", '"')
+        return {"role": "user", "content": assistant_response}
+
+    def _get_message_quering_for_email_category_and_summary(
+        self, mail_text: str
+    ) -> MSG_TYPE:
+        """Create user content used to prompt."""
+        categories = str(list(CATEGORIES.keys()))
+        content = (
+            f'Opisz problem zawarty w mailu: "{mail_text}".'
+            "Napisz podsumowanie oraz zaklasyfikuj problem do klasy"
+            f"jednej z {categories}."
+            'Zwróć w formacie JSON: {"problem", "summmary"}.'
+        )
+
+        return {"role": "user", "content": content}
+
+    def _determine_information_to_add(self, category: str) -> str:
+        # TODO handle lack of class because of wrong GPT answer
+        category_dict = CATEGORIES[category]
+        link = category_dict.get("link", None)
+        if link is not None:
+            return (
+                f"Dziękujemy za zadanie pytania. Proszę sprawdzić, czy "
+                f"odpowiedzi na pytanie nie jest pan/pani w stanie znaleść na "
+                f"stronie:\n{link}.\n"
+                f"Jeśli nie udałaby się Panu/Pani odszukać "
+                f"szukanych informacji, proszę wysłać zapytanie ponownie, "
+                f"na które pracownik dziekanatu udzieli odpowiedzi."
+            )
+
+        if "response" in category_dict:
+            return category_dict["response"]
+
+        else:
+            raise ValueError(
+                "Category dict should contain either field"
+                " 'link' or 'response`."
+            )
+
+    def _get_message_quering_for_email_answer(
+        self, information_to_add: str
+    ) -> MSG_TYPE:
+        with open(
+            DATA_DIR / "email_generation_prompt.txt", "r", encoding="utf8"
+        ) as f:
+            lines = f.readlines()
+
+        prompt_template = "".join(lines).strip()
+        return {
+            "role": "user",
+            "content": prompt_template.format(info=information_to_add),
+        }
+
+    def _call_chatgpt(self, prompt: PROMPT_TYPE) -> dict[str, Any]:
+        logger.info("Prompt send to ChatGPT")
+        chat_response = self._chat_gpt_model(prompt)
+        logger.info("Response received from ChatGPT")
+        return chat_response

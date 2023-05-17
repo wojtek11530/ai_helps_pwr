@@ -9,4 +9,5 @@ class EmailContainer:
     category: str = None
     summary: str = None
     problem: str = None
+    response: str = None
     prompt: list[dict[str, str]] = None

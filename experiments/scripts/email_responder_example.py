@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from ai_helps_pwr.email_assistance.email_responder import EmailResponder
 
 email_text = """Dzień dobry,
@@ -15,8 +17,8 @@ def main():
     responder = EmailResponder()
     response = responder.generate_response(email_text)
 
-    print(f"Email text:\n{email_text}")
-    print(f"Generated response:\n{response}")
+    print("Email and response:")
+    pprint(vars(response))
 
 
 if __name__ == "__main__":
