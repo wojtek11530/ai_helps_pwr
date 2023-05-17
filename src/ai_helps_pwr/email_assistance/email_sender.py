@@ -33,6 +33,7 @@ class EmailSender:
         html = html.replace('Odpowiedz', text)
         self.add_pic_to_email("image1", 'data/email/images/image-1.png')
         self.add_pic_to_email("image2", 'data/email/images/image-2.png')
+        self.add_pic_to_email("image3", 'data/email/images/image-3.png')
         self.add_pic_to_email("image4", 'data/email/images/image-4.jpeg')
         self.add_pic_to_email("image5", 'data/email/images/image-5.png')
         self.add_pic_to_email("image6", 'data/email/images/students.png')
