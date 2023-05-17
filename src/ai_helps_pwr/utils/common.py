@@ -38,7 +38,7 @@ def get_openai_api_key(
 
 def get_email_credentials(
     config_path: Path = Path(DEFAULT_OPENAI_API_CONFIG),
-) -> str:
+) -> tuple[str, str]:
     """Load email credentials from config file."""
     config = configparser.RawConfigParser()
     config.read(config_path)

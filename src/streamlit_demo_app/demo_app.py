@@ -2,7 +2,11 @@
 import streamlit as st
 
 from ai_helps_pwr.email_assistance.email_responder import EmailResponder
-from streamlit_demo_app.settings import APP_DIR
+from ai_helps_pwr.email_assistance.email_sender import EmailSender
+from ai_helps_pwr.utils.common import get_email_credentials
+from streamlit_demo_app.settings import APP_DIR, CONFIG_DIR
+
+EMAIL_RECEIVER = "wojtek19962a32@gmail.com"
 
 
 def main():
@@ -27,6 +31,11 @@ def main():
 
     # Create EmailResponder object
     responder = EmailResponder()
+
+    # Create EmailSender object
+    config_path = CONFIG_DIR / "config.local"
+    sender, password = get_email_credentials(config_path)
+    email_sender = EmailSender(sender, password)
 
     st.title("Asystent dziekanatu")
     st.markdown("**Mejl studenta** 👇")
@@ -81,6 +90,10 @@ def main():
             st.markdown(
                 f"<div class='italic'>{st.session_state.mail_response}</div>",
                 unsafe_allow_html=True,
+            )
+            email_sender.send_mail(
+                receiver_email=EMAIL_RECEIVER,
+                text=st.session_state.mail_response,
             )
 
 
