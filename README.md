@@ -38,3 +38,13 @@ Then you can use:
 experiments/scripts/conversation.py
 ```
 where example input prompt you can find in `data/test_prompt.json`
+
+# send email
+To send email please add to config.locla file:
+```
+[email]
+sender = yourmail
+password = yourpassword
+```
+
+Under the link please find how to get password: https://support.google.com/accounts/answer/185833?hl=pl, and create new app_password: https://myaccount.google.com/u/1/apppasswords.
