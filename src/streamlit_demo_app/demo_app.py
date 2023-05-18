@@ -95,6 +95,7 @@ def main():
                 receiver_email=EMAIL_RECEIVER,
                 text=st.session_state.mail_response,
             )
+        _enable_button()
 
 
 @st.cache_resource
