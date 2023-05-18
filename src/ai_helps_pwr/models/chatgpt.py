@@ -12,6 +12,7 @@ class ChatGPT:
         self.name = name
         self.gpt_model_name = gpt_model_name
         openai.api_key = key
+        openai.organization = "bardsai"
 
     def __call__(self, prompt: list[dict[str, str]]) -> dict[str, Any]:
         """Post prompt to GPT API."""
